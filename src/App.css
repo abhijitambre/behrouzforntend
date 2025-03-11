@@ -137,6 +137,7 @@
   margin: auto;
   border-radius: 10%;
   background-color: transparent;
+  border: none;
 }
 .modal-header .btn-close {
   position: relative;
@@ -152,6 +153,7 @@
 }
 .modal-header {
   background-color: transparent;
+  border: none;
 }
 .btn-close {
   background: transparent var(--bs-btn-close-bg) center/0.6em auto no-repeat;
