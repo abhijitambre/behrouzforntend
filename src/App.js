@@ -14,7 +14,7 @@ const OTPForm = () => {
   const [showOtpField, setShowOtpField] = useState(false);
   const [otpVerified, setOtpVerified] = useState(false);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
-  const [captchaToken, setCaptchaToken] = useState(null);
+  // const [captchaToken, setCaptchaToken] = useState(null);
   const [isSendingOtp, setIsSendingOtp] = useState(false);
   const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
 
@@ -92,10 +92,10 @@ const OTPForm = () => {
       alert("Please verify OTP before submitting");
       return;
     }
-    if (!captchaToken) {
-      alert("Please complete the reCAPTCHA verification");
-      return;
-    }
+    // if (!captchaToken) {
+    //   alert("Please complete the reCAPTCHA verification");
+    //   return;
+    // }
     setShowSuccessPopup(true);
   };
 
@@ -167,10 +167,10 @@ const OTPForm = () => {
               </button>
             </div>
           )}
-          <ReCAPTCHA
-            sitekey="6Lf-c_EqAAAAANt3FPvn4hXKlSa7R99evzBjJtXW"
-            onChange={setCaptchaToken}
-          />
+          // <ReCAPTCHA
+          //   sitekey="6Lf-c_EqAAAAANt3FPvn4hXKlSa7R99evzBjJtXW"
+          //   onChange={setCaptchaToken}
+          // />
           <button
             type="submit"
             className="w-100 bg-gold blinker-semibold btn-text text-black py-2 br-20 border-0"
