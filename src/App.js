@@ -3,7 +3,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import { Modal } from "react-bootstrap";
 import { logo, bg1, strip, strip2, thank } from "./assets";
-import { saveDataToJson } from "./storage";
 import axios from "axios";
 import ReCAPTCHA from "react-google-recaptcha";
 
@@ -35,8 +34,8 @@ const OTPForm = () => {
   };
 
   const handleSendOtp = async () => {
-    if (!/^[\w.-]+@[\w.-]+\.[a-zA-Z]{2,}$/.test(email)) {
-      alert("Please enter a valid email address");
+    if (!/^[0-9]{10}$/.test(phone)) {
+      alert("Please enter a valid phone number");
       return;
     }
 
@@ -46,7 +45,7 @@ const OTPForm = () => {
         "https://abbie-c8b13266.serverless.boltic.app/send-otp",
         {
           name,
-          phoneNumber: phone,
+          phoneNumber: `+91${phone}`,
           email,
         }
       );
@@ -72,7 +71,7 @@ const OTPForm = () => {
       await axios.post(
         "https://abbie-c8b13266.serverless.boltic.app/verify-otp",
         {
-          email,
+          phoneNumber: `+91${phone}`,
           otp,
         }
       );
@@ -97,8 +96,6 @@ const OTPForm = () => {
       alert("Please complete the reCAPTCHA verification");
       return;
     }
-
-    saveDataToJson({ name, phone, email });
     setShowSuccessPopup(true);
   };
 
@@ -128,23 +125,14 @@ const OTPForm = () => {
               placeholder="Name"
             />
           </div>
-          <div className="mb-3">
+          <div className="mb-3 position-relative">
             <input
               type="tel"
               value={phone}
               onChange={(e) => validatePhone(e.target.value)}
               className="w-100 px-3 py-2 input-text blinker-bold border rounded-lg bg-beige br-20 border-0"
-              placeholder="Phone Number (Optional)"
-            />
-          </div>
-          <div className="mb-3 position-relative">
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => validateEmail(e.target.value)}
-              className="w-100 px-3 py-2 input-text blinker-bold border rounded-lg bg-beige br-20 border-0"
               required
-              placeholder="Email Address"
+              placeholder="Phone Number"
             />
             <button
               type="button"
@@ -168,6 +156,7 @@ const OTPForm = () => {
               <button
                 type="button"
                 onClick={handleVerifyOtp}
+                className="position-absolute end-0 top-50 translate-middle-y btn2 me-2 bg-transparent blinker-bold btn-text border-0 text-black py-1 px-3"
                 disabled={isVerifyingOtp}
               >
                 {isVerifyingOtp
@@ -178,38 +167,46 @@ const OTPForm = () => {
               </button>
             </div>
           )}
-          <ReCAPTCHA sitekey="YOUR_SITE_KEY" onChange={setCaptchaToken} />
-          <button type="submit">Click to donate a biryani</button>
-        </form>
-      </div>
-      <Modal
-        show={showSuccessPopup}
-        onHide={() => setShowSuccessPopup(false)}
-        centered
-      >
-        <Modal.Header closeButton></Modal.Header>
-        <Modal.Body className="bg-beige br-20 text-center">
-          <div className="mt-neg60 text-center">
-            <img
-              src={thank}
-              alt="thank You"
-              className="w-80 h-auto object-contain my-1"
-            />
-          </div>
-          <h1 className="heading3 blinker-bold color-brown">
-            Shukran, huzoor!
-          </h1>
-          <img
-            src={strip2}
-            alt="strip"
-            className="w-60 h-auto object-contain my-1 mt-3"
+          <ReCAPTCHA
+            sitekey="6LfVZvEqAAAAAC4i_VT1fp_LI6-QtbRmFqjeZCok"
+            onChange={setCaptchaToken}
           />
-          <p className="text blinker-bold mt-3">
-            If you wish to extend your support to those in need, you can
-            directly contribute your donations to our partnered NGOs.
-          </p>
-        </Modal.Body>
-      </Modal>
+          <button
+            type="submit"
+            className="w-100 bg-gold blinker-semibold btn-text text-black py-2 br-20 border-0"
+          >
+            Click to donate a biryani
+          </button>
+        </form>
+        <Modal
+          show={showSuccessPopup}
+          onHide={() => setShowSuccessPopup(false)}
+          centered
+        >
+          <Modal.Header closeButton></Modal.Header>
+          <Modal.Body className="bg-beige br-20 text-center">
+            <div className="mt-neg60 text-center">
+              <img
+                src={thank}
+                alt="thank You"
+                className="w-80 h-auto object-contain my-1"
+              />
+            </div>
+            <h1 className="heading3 blinker-bold color-brown">
+              Shukran, huzoor!
+            </h1>
+            <img
+              src={strip2}
+              alt="strip"
+              className="w-60 h-auto object-contain my-1 mt-3"
+            />
+            <p className="text blinker-bold mt-3">
+              If you wish to extend your support to those in need, you can
+              directly contribute your donations to our partnered NGOs.
+            </p>
+          </Modal.Body>
+        </Modal>
+      </div>
     </div>
   );
 };
