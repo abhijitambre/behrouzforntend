@@ -196,6 +196,34 @@ const OTPForm = () => {
           </button>
         </form>
       </div>
+      <Modal
+        show={showSuccessPopup}
+        onHide={() => setShowSuccessPopup(false)}
+        centered
+      >
+        <Modal.Header closeButton></Modal.Header>
+        <Modal.Body className="bg-beige br-20 text-center">
+          <div className="mt-neg60 text-center">
+            <img
+              src={thank}
+              alt="thank You"
+              className="w-80 h-auto object-contain my-1"
+            />
+          </div>
+          <h1 className="heading3 blinker-bold color-brown">
+            Shukran, huzoor!
+          </h1>
+          <img
+            src={strip2}
+            alt="strip"
+            className="w-60 h-auto object-contain my-1 mt-3"
+          />
+          <p className="text blinker-bold mt-3">
+            If you wish to extend your support to those in need, you can
+            directly contribute your donations to our partnered NGOs.
+          </p>
+        </Modal.Body>
+      </Modal>
     </div>
   );
 };
