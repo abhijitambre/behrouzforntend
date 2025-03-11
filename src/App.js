@@ -42,10 +42,13 @@ const OTPForm = () => {
 
     setIsSendingOtp(true);
     try {
-      await axios.get(
-        `https://abbie-c8b13266.serverless.boltic.app/send-otp?method=email&contact=${encodeURIComponent(
-          email
-        )}`
+      await axios.post(
+        "https://abbie-c8b13266.serverless.boltic.app/send-otp",
+        {
+          name,
+          phoneNumber: phone,
+          email,
+        }
       );
       setShowOtpField(true);
       alert("OTP sent successfully");
@@ -66,10 +69,12 @@ const OTPForm = () => {
 
     setIsVerifyingOtp(true);
     try {
-      await axios.get(
-        `https://abbie-c8b13266.serverless.boltic.app/verify-otp?method=email&contact=${encodeURIComponent(
-          email
-        )}&otp=${encodeURIComponent(otp)}`
+      await axios.post(
+        "https://abbie-c8b13266.serverless.boltic.app/verify-otp",
+        {
+          email,
+          otp,
+        }
       );
       setOtpVerified(true);
       alert("OTP verified successfully");
