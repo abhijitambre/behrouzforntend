@@ -8,9 +8,9 @@ import axios from "axios";
 import ReCAPTCHA from "react-google-recaptcha";
 
 const OTPForm = () => {
-  const [method, setMethod] = useState("phone"); // User selection for verification method
   const [name, setName] = useState("");
-  const [contact, setContact] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
   const [showOtpField, setShowOtpField] = useState(false);
   const [otpVerified, setOtpVerified] = useState(false);
@@ -26,23 +26,16 @@ const OTPForm = () => {
     }
   };
 
-  const validateContact = (value) => {
-    if (method === "phone") {
-      setContact(value.replace(/\D/g, "").slice(0, 10));
-    } else {
-      setContact(value);
-    }
+  const validatePhone = (value) => {
+    setPhone(value.replace(/\D/g, "").slice(0, 10));
+  };
+
+  const validateEmail = (value) => {
+    setEmail(value);
   };
 
   const handleSendOtp = async () => {
-    if (method === "phone" && contact.length !== 10) {
-      alert("Please enter a valid 10-digit phone number");
-      return;
-    }
-    if (
-      method === "email" &&
-      !/^[\w.-]+@[\w.-]+\.[a-zA-Z]{2,}$/.test(contact)
-    ) {
+    if (!/^[\w.-]+@[\w.-]+\.[a-zA-Z]{2,}$/.test(email)) {
       alert("Please enter a valid email address");
       return;
     }
@@ -50,8 +43,8 @@ const OTPForm = () => {
     setIsSendingOtp(true);
     try {
       await axios.get(
-        `https://abbie-c8b13266.serverless.boltic.app/send-otp?method=${method}&contact=${encodeURIComponent(
-          contact
+        `https://abbie-c8b13266.serverless.boltic.app/send-otp?method=email&contact=${encodeURIComponent(
+          email
         )}`
       );
       setShowOtpField(true);
@@ -74,8 +67,8 @@ const OTPForm = () => {
     setIsVerifyingOtp(true);
     try {
       await axios.get(
-        `https://abbie-c8b13266.serverless.boltic.app/verify-otp?method=${method}&contact=${encodeURIComponent(
-          contact
+        `https://abbie-c8b13266.serverless.boltic.app/verify-otp?method=email&contact=${encodeURIComponent(
+          email
         )}&otp=${encodeURIComponent(otp)}`
       );
       setOtpVerified(true);
@@ -100,7 +93,7 @@ const OTPForm = () => {
       return;
     }
 
-    saveDataToJson({ name, contact });
+    saveDataToJson({ name, phone, email });
     setShowSuccessPopup(true);
   };
 
@@ -121,16 +114,6 @@ const OTPForm = () => {
         />
         <form onSubmit={handleSubmit} className="w-100 position-relative">
           <div className="mb-3">
-            <select
-              value={method}
-              onChange={(e) => setMethod(e.target.value)}
-              className="w-100 px-3 py-2 input-text blinker-bold border rounded-lg bg-beige br-20 border-0"
-            >
-              <option value="phone">Phone OTP</option>
-              <option value="email">Email OTP</option>
-            </select>
-          </div>
-          <div className="mb-3">
             <input
               type="text"
               value={name}
@@ -140,16 +123,23 @@ const OTPForm = () => {
               placeholder="Name"
             />
           </div>
+          <div className="mb-3">
+            <input
+              type="tel"
+              value={phone}
+              onChange={(e) => validatePhone(e.target.value)}
+              className="w-100 px-3 py-2 input-text blinker-bold border rounded-lg bg-beige br-20 border-0"
+              placeholder="Phone Number (Optional)"
+            />
+          </div>
           <div className="mb-3 position-relative">
             <input
-              type={method === "phone" ? "tel" : "email"}
-              value={contact}
-              onChange={(e) => validateContact(e.target.value)}
+              type="email"
+              value={email}
+              onChange={(e) => validateEmail(e.target.value)}
               className="w-100 px-3 py-2 input-text blinker-bold border rounded-lg bg-beige br-20 border-0"
               required
-              placeholder={
-                method === "phone" ? "Phone Number" : "Email Address"
-              }
+              placeholder="Email Address"
             />
             <button
               type="button"
@@ -173,7 +163,6 @@ const OTPForm = () => {
               <button
                 type="button"
                 onClick={handleVerifyOtp}
-                className="position-absolute end-0 top-50 translate-middle-y btn2 me-2 bg-transparent blinker-bold btn-text border-0 text-black py-1 px-3"
                 disabled={isVerifyingOtp}
               >
                 {isVerifyingOtp
@@ -184,16 +173,8 @@ const OTPForm = () => {
               </button>
             </div>
           )}
-          <ReCAPTCHA
-            sitekey="YOUR_RECAPTCHA_SITE_KEY"
-            onChange={(token) => setCaptchaToken(token)}
-          />
-          <button
-            type="submit"
-            className="w-100 bg-gold blinker-semibold btn-text text-black py-2 br-20 border-0"
-          >
-            Click to donate a biryani
-          </button>
+          <ReCAPTCHA sitekey="YOUR_SITE_KEY" onChange={setCaptchaToken} />
+          <button type="submit">Click to donate a biryani</button>
         </form>
       </div>
       <Modal
