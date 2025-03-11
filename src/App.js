@@ -168,7 +168,7 @@ const OTPForm = () => {
             </div>
           )}
           <ReCAPTCHA
-            sitekey="6LfVZvEqAAAAAC4i_VT1fp_LI6-QtbRmFqjeZCok"
+            sitekey="6Lf-c_EqAAAAANt3FPvn4hXKlSa7R99evzBjJtXW"
             onChange={setCaptchaToken}
           />
           <button
