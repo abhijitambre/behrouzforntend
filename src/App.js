@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import { Modal } from "react-bootstrap";
@@ -17,7 +17,15 @@ const OTPForm = () => {
   const [captchaToken, setCaptchaToken] = useState(null);
   const [isSendingOtp, setIsSendingOtp] = useState(false);
   const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
-
+  const [isResendingOtp, setIsResendingOtp] = useState(false);
+  const [resendTimer, setResendTimer] = useState(0);
+  useEffect(() => {
+    let timer;
+    if (resendTimer > 0) {
+      timer = setTimeout(() => setResendTimer(resendTimer - 1), 1000);
+    }
+    return () => clearTimeout(timer);
+  }, [resendTimer]);
   const validateName = (value) => {
     const regex = /^[a-zA-Z\s]{0,50}$/;
     if (regex.test(value) || value === "") {
@@ -50,6 +58,9 @@ const OTPForm = () => {
         }
       );
       setShowOtpField(true);
+      if (resendTimer === 0) {
+        setResendTimer(30);
+      }
       alert("OTP sent successfully");
     } catch (error) {
       alert(
@@ -85,6 +96,28 @@ const OTPForm = () => {
       setIsVerifyingOtp(false);
     }
   };
+  const handleResendOtp = async () => {
+    if (resendTimer > 0) return;
+    setIsResendingOtp(true);
+    try {
+      await axios.post(
+        "https://abbie-c8b13266.serverless.boltic.app/send-otp",
+        {
+          name,
+          phoneNumber: `+91${phone}`,
+          email,
+        }
+      );
+      setResendTimer(30);
+      alert("OTP resent successfully");
+    } catch (error) {
+      alert(
+        "Error resending OTP: " + (error.response?.data?.error || error.message)
+      );
+    } finally {
+      setIsResendingOtp(false);
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -93,8 +126,8 @@ const OTPForm = () => {
       return;
     }
     if (!captchaToken) {
-    alert("Please complete the reCAPTCHA verification");
-    return;
+      alert("Please complete the reCAPTCHA verification");
+      return;
     }
     setShowSuccessPopup(true);
   };
@@ -156,8 +189,8 @@ const OTPForm = () => {
               <button
                 type="button"
                 onClick={handleVerifyOtp}
-                className="position-absolute end-0 top-50 translate-middle-y btn2 me-2 bg-transparent blinker-bold btn-text border-0 text-black py-1 px-3"
-                disabled={isVerifyingOtp}
+                className="position-absolute top-36 end-0 translate-middle-y btn2 me-2 bg-transparent blinker-bold btn-text border-0 text-black py-1 px-3"
+                disabled={isVerifyingOtp} 
               >
                 {isVerifyingOtp
                   ? "Verifying..."
@@ -165,10 +198,19 @@ const OTPForm = () => {
                   ? "OTP Verified"
                   : "Verify OTP"}
               </button>
+              <button
+                onClick={handleResendOtp}
+                disabled={resendTimer > 0}
+                className="bg-transparent text-white border-0 btn2"
+              >
+                {resendTimer > 0
+                  ? `Resend OTP in ${resendTimer}s`
+                  : "Resend OTP"}
+              </button>
             </div>
           )}
           <ReCAPTCHA
-            sitekey="6Lf-c_EqAAAAANt3FPvn4hXKlSa7R99evzBjJtXW"
+            sitekey="6LfVZvEqAAAAAC4i_VT1fp_LI6-QtbRmFqjeZCok"
             onChange={setCaptchaToken}
           />
           <button
