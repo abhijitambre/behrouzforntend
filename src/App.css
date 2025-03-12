@@ -163,6 +163,9 @@
   line-height: 20px;
   letter-spacing: 0;
 }
+.top-36 {
+  top: 36%;
+}
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
